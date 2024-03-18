@@ -1,0 +1,6 @@
+port: 1323
+system:
+  message: hello
+otlp:
+  endpoint: 127.0.0.1:4317
+gormDsn: "root:password@tcp(127.0.0.1:3306)/go-rest-api?charset=utf8mb4&parseTime=True&loc=Local"
