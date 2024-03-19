@@ -5,6 +5,7 @@ type AppConfig struct {
 	System  SystemConfig
 	Otlp    OtlpConfig
 	GormDsn string
+	Kafka   KafkaConfig
 }
 
 type SystemConfig struct {
@@ -13,4 +14,8 @@ type SystemConfig struct {
 
 type OtlpConfig struct {
 	Endpoint string
+}
+
+type KafkaConfig struct {
+	Brokers []string
 }
