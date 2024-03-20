@@ -53,6 +53,7 @@ func (s *ProductService) GetAllProducts(ctx context.Context) ([]dtos.ProductDto,
 
 	for _, product := range products {
 		productDtos = append(productDtos, dtos.ProductDto{
+			Id:          product.ID,
 			Name:        product.Name,
 			Description: product.Description,
 			UnitPrice:   product.UnitPrice,
@@ -60,4 +61,20 @@ func (s *ProductService) GetAllProducts(ctx context.Context) ([]dtos.ProductDto,
 	}
 
 	return productDtos, nil
+}
+
+func (s *ProductService) GetProductById(ctx context.Context, id string) (*dtos.ProductDto, error) {
+	var product models.Product
+	result := s.db.WithContext(ctx).First(&product, id)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &dtos.ProductDto{
+		Id:          product.ID,
+		Name:        product.Name,
+		Description: product.Description,
+		UnitPrice:   product.UnitPrice,
+	}, nil
 }

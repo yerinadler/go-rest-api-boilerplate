@@ -1,8 +1,6 @@
 package kafka
 
 import (
-	"log"
-
 	"github.com/IBM/sarama"
 )
 
@@ -32,7 +30,6 @@ func (cg *KafkaConsumerGroupHandler) ConsumeClaim(session sarama.ConsumerGroupSe
 				return nil
 			}
 
-			log.Printf("Message claimed: value = %s, timestamp = %v, topic = %s", string(message.Value), message.Timestamp, message.Topic)
 			session.MarkMessage(message, "")
 		case <-session.Context().Done():
 			return nil

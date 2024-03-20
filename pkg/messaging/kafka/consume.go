@@ -32,6 +32,7 @@ func StartConsumption(
 
 	config := sarama.NewConfig()
 	config.Consumer.Offsets.Initial = sarama.OffsetNewest
+	config.Version = sarama.V2_5_0_0
 	config.Consumer.Group.Rebalance.GroupStrategies = []sarama.BalanceStrategy{sarama.NewBalanceStrategyRange()}
 
 	consumer := KafkaConsumerGroupHandler{
@@ -66,6 +67,7 @@ func StartConsumption(
 	}()
 
 	<-consumer.ready
+	log.Println("Sarama consumer up and running!...")
 
 	sigusr1 := make(chan os.Signal, 1)
 	signal.Notify(sigusr1, syscall.SIGUSR1)

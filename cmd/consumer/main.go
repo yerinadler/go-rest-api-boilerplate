@@ -1,10 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
+	"github.com/IBM/sarama"
 	"github.com/example/go-rest-api-revision/config"
+	"github.com/example/go-rest-api-revision/pkg/messaging/kafka"
 )
 
 func main() {
@@ -13,5 +14,16 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println(cfg.Kafka.Brokers)
+	if err := kafka.StartConsumption(
+		cfg.Kafka.Brokers,
+		[]string{"test"},
+		"go-rest-api-consumer",
+		"go-rest-api",
+		func(message *sarama.ConsumerMessage) error {
+			log.Printf("Message claimed: value = %s, timestamp = %v, topic = %s", string(message.Value), message.Timestamp, message.Topic)
+			return nil
+		},
+	); err != nil {
+		log.Fatal(err)
+	}
 }

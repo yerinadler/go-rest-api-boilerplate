@@ -1,5 +1,5 @@
 # Go Rest API Project
-This is a Go revision project created with Echo V4, Viper, MongoDB, etc.
+This is a Go project created with Echo V4, Viper, Gorm, etc. This could be used as a foundational project with no headache for setting up things like observability,
 
 ## Technologies used
 - Echo v4 - API Framework
