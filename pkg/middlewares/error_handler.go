@@ -9,6 +9,7 @@ import (
 	"github.com/example/go-rest-api-revision/pkg/responses"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
+	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
 )
@@ -42,6 +43,7 @@ func (eh *CustomErrorHandler) Handle(err error, c echo.Context) {
 		}
 
 		span.SetStatus(codes.Error, appErr.Message)
+		span.SetAttributes(attribute.Int("http.status_code", exception.GetHttpStatusForCode(appErr.Code)))
 	} else {
 		eh.logger.WithContext(ctx).WithError(err).Error(err.Error())
 		if err := c.JSON(http.StatusInternalServerError, responses.Response{
@@ -51,5 +53,6 @@ func (eh *CustomErrorHandler) Handle(err error, c echo.Context) {
 			fmt.Println(err)
 		}
 		span.SetStatus(codes.Error, err.Error())
+		span.SetAttributes(attribute.Int("http.status_code", http.StatusInternalServerError))
 	}
 }

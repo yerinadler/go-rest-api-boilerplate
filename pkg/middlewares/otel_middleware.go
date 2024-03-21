@@ -20,7 +20,6 @@ func OtelMiddleware(appName string) echo.MiddlewareFunc {
 
 			request := c.Request()
 			savedCtx := request.Context()
-			c.Set("tracer", tracer)
 
 			defer func() {
 				request = request.WithContext(savedCtx)
