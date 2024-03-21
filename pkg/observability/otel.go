@@ -25,12 +25,12 @@ func newExporter(ctx context.Context, otlpEndpoint string) (*otlptrace.Exporter,
 	return otlptracegrpc.New(ctx, otlptracegrpc.WithGRPCConn(conn))
 }
 
-func newResource(ctx context.Context) (*resource.Resource, error) {
+func newResource(ctx context.Context, appName string) (*resource.Resource, error) {
 	return resource.New(
 		ctx,
 		resource.WithAttributes(
-			semconv.ServiceNameKey.String("go-rest-api-revision"),
-			attribute.String("application", "go-rest-api-revision"),
+			semconv.ServiceNameKey.String(appName),
+			attribute.String("application", appName),
 		),
 	)
 }
@@ -45,10 +45,10 @@ func newTraceProvider(resource *resource.Resource, spanProcessor sdktrace.SpanPr
 	return tracerProvider
 }
 
-func InitTracer(otlpEndpoint string) func() {
+func InitTracer(otlpEndpoint string, appName string) func() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 
-	resource, err := newResource(ctx)
+	resource, err := newResource(ctx, appName)
 	exceptions.ReportError(err, "failed to create the OTLP resource")
 
 	exporter, err := newExporter(ctx, otlpEndpoint)

@@ -1,11 +1,12 @@
 package config
 
 type AppConfig struct {
-	Port    string
-	System  SystemConfig
-	Otlp    OtlpConfig
-	GormDsn string
-	Kafka   KafkaConfig
+	ApplicationName string
+	Port            string
+	System          SystemConfig
+	Otlp            OtlpConfig
+	GormDsn         string
+	Kafka           KafkaConfig
 }
 
 type SystemConfig struct {

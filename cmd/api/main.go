@@ -7,9 +7,13 @@ import (
 	"github.com/example/go-rest-api-revision/internal/api"
 	gormDb "github.com/example/go-rest-api-revision/internal/db/gorm"
 	"github.com/example/go-rest-api-revision/internal/db/gorm/models"
+	"github.com/example/go-rest-api-revision/internal/logger"
 	"github.com/example/go-rest-api-revision/internal/services"
+	"github.com/example/go-rest-api-revision/pkg/middlewares"
 	"github.com/example/go-rest-api-revision/pkg/observability"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/sirupsen/logrus"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
 	"go.opentelemetry.io/otel"
 )
@@ -20,7 +24,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	shutdown := observability.InitTracer(cfg.Otlp.Endpoint)
+	logger := logger.GetLogger()
+
+	shutdown := observability.InitTracer(cfg.Otlp.Endpoint, cfg.ApplicationName)
 	defer shutdown()
 
 	tracer := otel.Tracer("main")
@@ -32,14 +38,28 @@ func main() {
 
 	db.AutoMigrate(&models.Product{})
 
-	echo := echo.New()
-	echo.Use(otelecho.Middleware("go-rest-api"))
+	e := echo.New()
+	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
+		LogURI:    true,
+		LogStatus: true,
+		LogValuesFunc: func(c echo.Context, values middleware.RequestLoggerValues) error {
+			logger.WithFields(logrus.Fields{
+				"URI":    values.URI,
+				"status": values.Status,
+			}).Info("request")
+
+			return nil
+		},
+	}))
+	e.Use(otelecho.Middleware("go-rest-api"))
+	e.HTTPErrorHandler = middlewares.ErrorHandler
+	e.Use(middleware.Recover())
 
 	systemService := services.NewSystemService(tracer)
 	productService := services.NewProductService(tracer, db)
 
-	api.InitSystemHandler(echo, systemService)
-	api.InitProductHandler(echo, productService)
+	api.InitSystemHandler(e, systemService)
+	api.InitProductHandler(e, productService)
 
-	echo.Logger.Fatal(echo.Start(":" + cfg.Port))
+	e.Logger.Fatal(e.Start(":" + cfg.Port))
 }

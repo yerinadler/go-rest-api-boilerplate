@@ -2,9 +2,11 @@ package services
 
 import (
 	"context"
+	"errors"
 
 	"github.com/example/go-rest-api-revision/internal/db/gorm/models"
 	"github.com/example/go-rest-api-revision/internal/dtos"
+	exception "github.com/example/go-rest-api-revision/pkg/exceptions"
 	"go.opentelemetry.io/otel/trace"
 	"gorm.io/gorm"
 )
@@ -68,6 +70,9 @@ func (s *ProductService) GetProductById(ctx context.Context, id string) (*dtos.P
 	result := s.db.WithContext(ctx).First(&product, id)
 
 	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, &exception.NotFoundException
+		}
 		return nil, result.Error
 	}
 
