@@ -13,8 +13,6 @@ import (
 	"github.com/example/go-rest-api-revision/pkg/observability"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/sirupsen/logrus"
-	"go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
 	"go.opentelemetry.io/otel"
 )
 
@@ -39,20 +37,10 @@ func main() {
 	db.AutoMigrate(&models.Product{})
 
 	e := echo.New()
-	e.Use(middleware.RequestLoggerWithConfig(middleware.RequestLoggerConfig{
-		LogURI:    true,
-		LogStatus: true,
-		LogValuesFunc: func(c echo.Context, values middleware.RequestLoggerValues) error {
-			logger.WithFields(logrus.Fields{
-				"URI":    values.URI,
-				"status": values.Status,
-			}).Info("request")
 
-			return nil
-		},
-	}))
-	e.Use(otelecho.Middleware("go-rest-api"))
-	e.HTTPErrorHandler = middlewares.ErrorHandler
+	e.Use(middlewares.OtelMiddleware(cfg.ApplicationName))
+	customErrorHandler := middlewares.NewCustomerErrorHandler(tracer, logger)
+	e.HTTPErrorHandler = customErrorHandler.Handle
 	e.Use(middleware.Recover())
 
 	systemService := services.NewSystemService(tracer)
