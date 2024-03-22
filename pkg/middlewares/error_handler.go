@@ -43,7 +43,7 @@ func (eh *CustomErrorHandler) Handle(err error, c echo.Context) {
 		}
 
 		span.SetStatus(codes.Error, appErr.Message)
-		span.SetAttributes(attribute.Int("http.status_code", exception.GetHttpStatusForCode(appErr.Code)))
+		// span.SetAttributes(attribute.Int("http.status_code", exception.GetHttpStatusForCode(appErr.Code)))
 	} else {
 		eh.logger.WithContext(ctx).WithError(err).Error(err.Error())
 		if err := c.JSON(http.StatusInternalServerError, responses.Response{

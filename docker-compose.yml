@@ -43,7 +43,38 @@ services:
       - 3000:3000
       - 4317:4317
       - 4318:4318
-
+  fluentbit:
+    image: cr.fluentbit.io/fluent/fluent-bit:latest
+    volumes:
+      - ./fluent.conf:/fluent-bit/etc/fluent-bit.conf:ro
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+  api:
+    build: .
+    ports:
+      - 1323:1323
+    environment:
+      APPLICATION_NAME: go-rest-api-api
+      PORT: 1323
+      KAFKA_BROKERS: kafka:29092
+      OTLP_ENDPOINT: lgtm-opentelemetry:4317
+      GORM_DSN: "root:password@tcp(mysql:3306)/go-rest-api?charset=utf8mb4&parseTime=True&loc=Local"
+      SYSTEM_MESSAGE: hello
+    logging:
+      driver: fluentd
+      options:
+        tag: go-rest-api-api
+    links:
+      - fluentbit
+  nginx:
+    image: nginx
+    ports:
+      - 8888:80
+    logging:
+      driver: fluentd
+    links:
+      - fluentbit
 volumes:
   mysql:
 

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/example/go-rest-api-revision/config"
@@ -22,14 +23,16 @@ func main() {
 		log.Fatal(err)
 	}
 
+	fmt.Println(cfg.Gorm.Dsn)
+
 	logger := logger.GetLogger()
 
-	shutdown := observability.InitTracer(cfg.Otlp.Endpoint, cfg.ApplicationName)
+	shutdown := observability.InitTracer(cfg.Otlp.Endpoint, cfg.Application.Name)
 	defer shutdown()
 
 	tracer := otel.Tracer("main")
 
-	db, err := gormDb.GetGormClient(cfg.GormDsn)
+	db, err := gormDb.GetGormClient(cfg.Gorm.Dsn)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -38,7 +41,7 @@ func main() {
 
 	e := echo.New()
 
-	e.Use(middlewares.OtelMiddleware(cfg.ApplicationName))
+	e.Use(middlewares.OtelMiddleware(cfg.Application.Name))
 	customErrorHandler := middlewares.NewCustomerErrorHandler(tracer, logger)
 	e.HTTPErrorHandler = customErrorHandler.Handle
 	e.Use(middleware.Recover())

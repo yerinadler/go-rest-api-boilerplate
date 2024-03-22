@@ -25,7 +25,7 @@ func GetLogger() *logrus.Logger {
 	logger.SetFormatter(&CustomFormatter{
 		Formatter: ecslogrus.Formatter{},
 	})
-	logger.SetLevel(logrus.DebugLevel)
+	logger.SetLevel(logrus.InfoLevel)
 
 	return logger
 }

@@ -51,6 +51,8 @@ func OtelMiddleware(appName string) echo.MiddlewareFunc {
 			err := next(c)
 			if err != nil {
 				span.SetAttributes(attribute.String("echo.error", err.Error()))
+				status := c.Response().Status
+				span.SetStatus(httpconv.ServerStatus(status))
 				c.Error(err)
 			}
 

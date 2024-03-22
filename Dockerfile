@@ -17,6 +17,7 @@ FROM alpine:3
 
 WORKDIR /app
 
+COPY --from=build_stage /usr/src/app/config.yaml .
 COPY --from=build_stage /usr/src/app/bin/app .
 
 CMD ["/app/app"]
