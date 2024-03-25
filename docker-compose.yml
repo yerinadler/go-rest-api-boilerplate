@@ -44,9 +44,11 @@ services:
       - 4317:4317
       - 4318:4318
   fluentbit:
-    image: cr.fluentbit.io/fluent/fluent-bit:latest
+    image: grafana/fluent-bit-plugin-loki:main
     volumes:
       - ./fluent.conf:/fluent-bit/etc/fluent-bit.conf:ro
+    environment:
+      LOKI_URL: http://lgtm-opentelemetry:3100/loki/api/v1/push
     ports:
       - "24224:24224"
       - "24224:24224/udp"
@@ -55,7 +57,7 @@ services:
     ports:
       - 1323:1323
     environment:
-      APPLICATION_NAME: go-rest-api-api
+      APPLICATION_NAME: go-rest-api-boilerplate
       PORT: 1323
       KAFKA_BROKERS: kafka:29092
       OTLP_ENDPOINT: lgtm-opentelemetry:4317
