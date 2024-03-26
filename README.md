@@ -1,10 +1,18 @@
 # Go Rest API Project
-This is a Go project created with Echo V4, Viper, Gorm, etc. This could be used as a foundational project with no headache for setting up things like observability,
+This is a Go project created with Echo V4, Viper, Gorm, etc. This could be used as a foundational project. This project comes with pre-configured observability stack based on LGTM stack by Grafana and is instrumented with Opentelemetry SDK
 
 ## Technologies used
 - Echo v4 - API Framework
 - Viper - Configuration Management
 - Opentelemetry - Observability library
+
+## How to run the project
+The `docker-compose.yml` file provided with this project includes everything to setup and run the projects. Issue the command on the terminal to
+launch the project
+
+```bash
+docker compose up -d --build
+```
 
 ## Convention
 Since this is an opinionated project, I lay down the foundation based on my own use case
