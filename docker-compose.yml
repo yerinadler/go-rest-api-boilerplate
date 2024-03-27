@@ -100,6 +100,19 @@ services:
         tag: go-rest-api-api
     links:
       - fluentbit
+  consumer:
+    build:
+      context: .
+      args:
+        TARGET: consumer
+    environment:
+      KAFKA_BROKERS: kafka:29092
+    logging:
+      driver: fluentd
+      options:
+        tag: go-rest-api-consumer
+    links:
+      - fluentbit
 
 volumes:
   mysql:

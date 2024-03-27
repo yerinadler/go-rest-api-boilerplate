@@ -2,24 +2,30 @@ package services
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"strconv"
 
 	"github.com/example/go-rest-api-revision/internal/db/gorm/models"
 	"github.com/example/go-rest-api-revision/internal/dtos"
+	"github.com/example/go-rest-api-revision/internal/events"
 	exception "github.com/example/go-rest-api-revision/pkg/exceptions"
+	"github.com/example/go-rest-api-revision/pkg/messaging/kafka"
 	"go.opentelemetry.io/otel/trace"
 	"gorm.io/gorm"
 )
 
 type ProductService struct {
-	tracer trace.Tracer
-	db     *gorm.DB
+	tracer   trace.Tracer
+	db       *gorm.DB
+	producer *kafka.KafkaProducer
 }
 
-func NewProductService(tracer trace.Tracer, db *gorm.DB) *ProductService {
+func NewProductService(tracer trace.Tracer, db *gorm.DB, producer *kafka.KafkaProducer) *ProductService {
 	return &ProductService{
 		tracer,
 		db,
+		producer,
 	}
 }
 
@@ -27,11 +33,23 @@ func (s *ProductService) CreateProduct(ctx context.Context, dto *dtos.ProductDto
 	ctx, span := s.tracer.Start(ctx, "creating a new product")
 	defer span.End()
 
-	result := s.db.WithContext(ctx).Create(&models.Product{
+	product := &models.Product{
 		Name:        dto.Name,
 		Description: dto.Description,
 		UnitPrice:   dto.UnitPrice,
-	})
+	}
+	result := s.db.WithContext(ctx).Create(product)
+
+	event := &events.ProductCreated{
+		Id:          product.ID,
+		Name:        product.Name,
+		Description: product.Description,
+		UnitPrice:   product.UnitPrice,
+	}
+
+	jsonEvent, _ := json.Marshal(event)
+
+	s.producer.Publish(ctx, "test", string(jsonEvent), strconv.FormatUint(uint64(product.ID), 10))
 
 	if result.Error != nil {
 		return result.Error

@@ -10,6 +10,7 @@ import (
 	"github.com/example/go-rest-api-revision/internal/db/gorm/models"
 	"github.com/example/go-rest-api-revision/internal/logger"
 	"github.com/example/go-rest-api-revision/internal/services"
+	"github.com/example/go-rest-api-revision/pkg/messaging/kafka"
 	"github.com/example/go-rest-api-revision/pkg/middlewares"
 	"github.com/example/go-rest-api-revision/pkg/observability"
 	"github.com/labstack/echo/v4"
@@ -46,8 +47,12 @@ func main() {
 	e.HTTPErrorHandler = customErrorHandler.Handle
 	e.Use(middleware.Recover())
 
+	kafkaProducer, err := kafka.NewKafkaProducer(cfg.Kafka.Brokers, logger, tracer)
+	if err != nil {
+		log.Fatal(err)
+	}
 	systemService := services.NewSystemService(tracer)
-	productService := services.NewProductService(tracer, db)
+	productService := services.NewProductService(tracer, db, kafkaProducer)
 
 	api.InitSystemHandler(e, systemService)
 	api.InitProductHandler(e, productService)
