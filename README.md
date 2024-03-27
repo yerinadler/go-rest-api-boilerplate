@@ -27,7 +27,7 @@ The project is based on simple configuration of 3-tier architecture with the fol
 > These directories rest inside the `internal` directory
 
 #### Shared packages
-The shared packages are all located in the `pkg` directory. This directory does not store business specific code, only shared modules e.g. response objects, utility functions, etc.
+The shared packages are all located in the `pkg` directory. This directory does not store business specific code, only shared modules e.g. response objects, utility functions, error codes, etc.
 
 ### Configuration Management
 For local development, the file `config.yaml` will be used to store local configuration. This file is not meant to be committed into the version control software

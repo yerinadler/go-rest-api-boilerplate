@@ -28,7 +28,7 @@ func main() {
 
 	logger := logger.GetLogger()
 
-	shutdown := observability.InitTracer(cfg.Otlp.Endpoint, cfg.Application.Name)
+	shutdown := observability.InitialiseOpentelemetry(cfg.Otlp.Endpoint, cfg.Application.Name)
 	defer shutdown()
 
 	tracer := otel.Tracer("main")
