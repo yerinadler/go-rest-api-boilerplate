@@ -28,6 +28,8 @@ datasources:
       httpMethod: GET
       tracesToLogs:
         datasourceUid: 'loki'
+        spanStartTimeShift: '-1h'
+        spanEndTimeShift: '1h'
         mappedTags: [{ key: 'service.name', value: 'job' }]
         mapTagNamesEnabled: true
         filterByTraceID: true

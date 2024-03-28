@@ -49,7 +49,9 @@ func (s *ProductService) CreateProduct(ctx context.Context, dto *dtos.ProductDto
 
 	jsonEvent, _ := json.Marshal(event)
 
-	s.producer.Publish(ctx, "test", string(jsonEvent), strconv.FormatUint(uint64(product.ID), 10))
+	if err := s.producer.Publish(ctx, "test", string(jsonEvent), strconv.FormatUint(uint64(product.ID), 10)); err != nil {
+		return err
+	}
 
 	if result.Error != nil {
 		return result.Error

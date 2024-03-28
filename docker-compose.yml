@@ -88,7 +88,7 @@ services:
     ports:
       - 1323:1323
     environment:
-      APPLICATION_NAME: go-rest-api-boilerplate
+      APPLICATION_NAME: go-rest-api-boilerplate-api
       PORT: 1323
       KAFKA_BROKERS: kafka:29092
       OTLP_ENDPOINT: otel-collector:4317
@@ -98,6 +98,9 @@ services:
       driver: fluentd
       options:
         tag: go-rest-api-api
+    depends_on:
+      - kafka
+      - mysql
     links:
       - fluentbit
   consumer:
@@ -106,11 +109,16 @@ services:
       args:
         TARGET: consumer
     environment:
+      APPLICATION_NAME: go-rest-api-boilerplate-consumer
       KAFKA_BROKERS: kafka:29092
+      OTLP_ENDPOINT: otel-collector:4317
     logging:
       driver: fluentd
       options:
         tag: go-rest-api-consumer
+    depends_on:
+      - kafka
+      - mysql
     links:
       - fluentbit
 

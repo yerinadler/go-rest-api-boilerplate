@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/example/go-rest-api-revision/config"
@@ -23,8 +22,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Println(cfg.Gorm.Dsn)
 
 	logger := logger.GetLogger()
 
