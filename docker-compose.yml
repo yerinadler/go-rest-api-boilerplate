@@ -48,6 +48,17 @@ services:
       GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
       GF_AUTH_DISABLE_LOGIN_FORM: true
       GF_FEATURE_TOGGLES_ENABLE: traceqlEditor
+  prometheus:
+    image: prom/prometheus:v2.50.0
+    ports:
+      - 9090:9090
+    volumes:
+      - ./infrastructure-config/prometheus.yaml:/etc/prometheus/prometheus.yaml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yaml"
+      - "--web.enable-remote-write-receiver"
+      - "--enable-feature=exemplar-storage"
+      - "--enable-feature=native-histograms"
   otel-collector:
     image: otel/opentelemetry-collector:latest
     ports:
@@ -85,10 +96,11 @@ services:
       - "24224:24224/udp"
   api:
     build: .
+    container_name: go-rest-api-boilerplate-api
     ports:
       - 1323:1323
     environment:
-      APPLICATION_NAME: go-rest-api-boilerplate-api
+      APPLICATION_NAME: "/go-rest-api-boilerplate-api"
       PORT: 1323
       KAFKA_BROKERS: kafka:29092
       OTLP_ENDPOINT: otel-collector:4317
@@ -108,8 +120,9 @@ services:
       context: .
       args:
         TARGET: consumer
+    container_name: go-rest-api-boilerplate-consumer
     environment:
-      APPLICATION_NAME: go-rest-api-boilerplate-consumer
+      APPLICATION_NAME: "/go-rest-api-boilerplate-consumer"
       KAFKA_BROKERS: kafka:29092
       OTLP_ENDPOINT: otel-collector:4317
     logging:
