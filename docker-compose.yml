@@ -100,7 +100,7 @@ services:
     ports:
       - 1323:1323
     environment:
-      APPLICATION_NAME: "/go-rest-api-boilerplate-api"
+      APPLICATION_NAME: go-rest-api-boilerplate-api
       PORT: 1323
       KAFKA_BROKERS: kafka:29092
       OTLP_ENDPOINT: otel-collector:4317
@@ -122,7 +122,7 @@ services:
         TARGET: consumer
     container_name: go-rest-api-boilerplate-consumer
     environment:
-      APPLICATION_NAME: "/go-rest-api-boilerplate-consumer"
+      APPLICATION_NAME: go-rest-api-boilerplate-consumer
       KAFKA_BROKERS: kafka:29092
       OTLP_ENDPOINT: otel-collector:4317
     logging:

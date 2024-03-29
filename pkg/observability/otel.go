@@ -2,6 +2,7 @@ package observability
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	exceptions "github.com/example/go-rest-api-revision/pkg/exceptions"
@@ -32,7 +33,7 @@ func newResource(ctx context.Context, appName string) (*resource.Resource, error
 		ctx,
 		resource.WithAttributes(
 			semconv.ServiceNameKey.String(appName),
-			attribute.String("application", appName),
+			attribute.String("application", fmt.Sprintf("/%s", appName)),
 		),
 	)
 }

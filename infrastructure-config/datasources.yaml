@@ -30,7 +30,7 @@ datasources:
         datasourceUid: 'loki'
         spanStartTimeShift: '-1h'
         spanEndTimeShift: '1h'
-        mappedTags: [{ key: 'service.name', value: 'job' }]
+        mappedTags: [{ key: 'application', value: 'container_name' }]
         mapTagNamesEnabled: true
         filterByTraceID: true
       serviceMap:
