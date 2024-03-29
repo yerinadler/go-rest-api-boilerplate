@@ -3,12 +3,12 @@ package main
 import (
 	"log"
 
-	"github.com/example/go-rest-api-revision/config"
-	"github.com/example/go-rest-api-revision/internal/api"
-	gormDb "github.com/example/go-rest-api-revision/internal/db/gorm"
-	"github.com/example/go-rest-api-revision/internal/db/gorm/models"
-	"github.com/example/go-rest-api-revision/internal/logger"
-	"github.com/example/go-rest-api-revision/internal/services"
+	"github.com/example/go-rest-api-revision/packages/product-service/api"
+	"github.com/example/go-rest-api-revision/packages/product-service/config"
+	gormDb "github.com/example/go-rest-api-revision/packages/product-service/db/gorm"
+	"github.com/example/go-rest-api-revision/packages/product-service/db/gorm/models"
+	"github.com/example/go-rest-api-revision/packages/product-service/logger"
+	"github.com/example/go-rest-api-revision/packages/product-service/services"
 	"github.com/example/go-rest-api-revision/pkg/messaging/kafka"
 	"github.com/example/go-rest-api-revision/pkg/middlewares"
 	"github.com/example/go-rest-api-revision/pkg/observability"
@@ -49,7 +49,7 @@ func main() {
 		log.Fatal(err)
 	}
 	systemService := services.NewSystemService(tracer)
-	productService := services.NewProductService(tracer, db, kafkaProducer)
+	productService := services.NewProductService(tracer, logger, db, kafkaProducer)
 
 	api.InitSystemHandler(e, systemService)
 	api.InitProductHandler(e, productService)

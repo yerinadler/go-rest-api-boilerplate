@@ -6,24 +6,27 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/example/go-rest-api-revision/internal/db/gorm/models"
-	"github.com/example/go-rest-api-revision/internal/dtos"
-	"github.com/example/go-rest-api-revision/internal/events"
+	"github.com/example/go-rest-api-revision/packages/product-service/db/gorm/models"
+	"github.com/example/go-rest-api-revision/packages/product-service/dtos"
+	"github.com/example/go-rest-api-revision/packages/product-service/events"
 	exception "github.com/example/go-rest-api-revision/pkg/exceptions"
 	"github.com/example/go-rest-api-revision/pkg/messaging/kafka"
+	"github.com/sirupsen/logrus"
 	"go.opentelemetry.io/otel/trace"
 	"gorm.io/gorm"
 )
 
 type ProductService struct {
 	tracer   trace.Tracer
+	logger   *logrus.Logger
 	db       *gorm.DB
 	producer *kafka.KafkaProducer
 }
 
-func NewProductService(tracer trace.Tracer, db *gorm.DB, producer *kafka.KafkaProducer) *ProductService {
+func NewProductService(tracer trace.Tracer, logger *logrus.Logger, db *gorm.DB, producer *kafka.KafkaProducer) *ProductService {
 	return &ProductService{
 		tracer,
+		logger,
 		db,
 		producer,
 	}
@@ -39,6 +42,8 @@ func (s *ProductService) CreateProduct(ctx context.Context, dto *dtos.ProductDto
 		UnitPrice:   dto.UnitPrice,
 	}
 	result := s.db.WithContext(ctx).Create(product)
+
+	s.logger.WithContext(ctx).Infof("successfully created the product %d : %s", product.ID, product.Name)
 
 	event := &events.ProductCreated{
 		Id:          product.ID,

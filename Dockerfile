@@ -1,6 +1,6 @@
 FROM golang:1.21-alpine AS build_stage
 
-ARG TARGET=api
+ARG TARGET
 
 WORKDIR /usr/src/app
 
