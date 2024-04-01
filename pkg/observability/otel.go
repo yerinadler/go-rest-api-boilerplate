@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	exceptions "github.com/example/go-rest-api-revision/pkg/exceptions"
+	exceptions "github.com/example/go-rest-api-boilerplate/pkg/exceptions"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"

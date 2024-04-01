@@ -6,12 +6,12 @@ import (
 	"log"
 
 	"github.com/IBM/sarama"
-	"github.com/example/go-rest-api-revision/internal/product-consumer/events"
-	"github.com/example/go-rest-api-revision/internal/product-consumer/events/handlers"
-	"github.com/example/go-rest-api-revision/internal/product-service/config"
-	"github.com/example/go-rest-api-revision/internal/product-service/logger"
-	"github.com/example/go-rest-api-revision/pkg/messaging/kafka"
-	"github.com/example/go-rest-api-revision/pkg/observability"
+	"github.com/example/go-rest-api-boilerplate/internal/product-consumer/events"
+	"github.com/example/go-rest-api-boilerplate/internal/product-consumer/events/handlers"
+	"github.com/example/go-rest-api-boilerplate/internal/product-service/config"
+	"github.com/example/go-rest-api-boilerplate/internal/product-service/logger"
+	"github.com/example/go-rest-api-boilerplate/pkg/messaging/kafka"
+	"github.com/example/go-rest-api-boilerplate/pkg/observability"
 	"go.opentelemetry.io/otel"
 )
 

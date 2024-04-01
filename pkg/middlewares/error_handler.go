@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	exception "github.com/example/go-rest-api-revision/pkg/exceptions"
-	"github.com/example/go-rest-api-revision/pkg/responses"
+	exception "github.com/example/go-rest-api-boilerplate/pkg/exceptions"
+	"github.com/example/go-rest-api-boilerplate/pkg/responses"
 	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 	"go.opentelemetry.io/otel/attribute"

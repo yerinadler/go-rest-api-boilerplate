@@ -3,9 +3,9 @@ package api
 import (
 	"net/http"
 
-	"github.com/example/go-rest-api-revision/internal/product-service/dtos"
-	"github.com/example/go-rest-api-revision/internal/product-service/services"
-	"github.com/example/go-rest-api-revision/pkg/responses"
+	"github.com/example/go-rest-api-boilerplate/internal/product-service/dtos"
+	"github.com/example/go-rest-api-boilerplate/internal/product-service/services"
+	"github.com/example/go-rest-api-boilerplate/pkg/responses"
 	"github.com/labstack/echo/v4"
 )
 

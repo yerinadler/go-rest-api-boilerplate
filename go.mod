@@ -1,4 +1,4 @@
-module github.com/example/go-rest-api-revision
+module github.com/example/go-rest-api-boilerplate
 
 go 1.21.5
 
