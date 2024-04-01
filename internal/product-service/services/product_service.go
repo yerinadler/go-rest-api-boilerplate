@@ -6,9 +6,9 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/example/go-rest-api-revision/packages/product-service/db/gorm/models"
-	"github.com/example/go-rest-api-revision/packages/product-service/dtos"
-	"github.com/example/go-rest-api-revision/packages/product-service/events"
+	"github.com/example/go-rest-api-revision/internal/product-service/db/gorm/models"
+	"github.com/example/go-rest-api-revision/internal/product-service/dtos"
+	"github.com/example/go-rest-api-revision/internal/product-service/events"
 	exception "github.com/example/go-rest-api-revision/pkg/exceptions"
 	"github.com/example/go-rest-api-revision/pkg/messaging/kafka"
 	"github.com/sirupsen/logrus"

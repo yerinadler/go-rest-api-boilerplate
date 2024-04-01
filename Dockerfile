@@ -35,6 +35,6 @@ COPY --from=build_stage /etc/group /etc/group
 COPY --from=build_stage /usr/src/app/config.yaml .
 COPY --from=build_stage /usr/src/app/bin/app .
 
-ENV TZ=Asia/Bangkok
+ENV TZ=UTC
 
 CMD ["/app/app"]

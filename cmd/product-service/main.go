@@ -3,12 +3,12 @@ package main
 import (
 	"log"
 
-	"github.com/example/go-rest-api-revision/packages/product-service/api"
-	"github.com/example/go-rest-api-revision/packages/product-service/config"
-	gormDb "github.com/example/go-rest-api-revision/packages/product-service/db/gorm"
-	"github.com/example/go-rest-api-revision/packages/product-service/db/gorm/models"
-	"github.com/example/go-rest-api-revision/packages/product-service/logger"
-	"github.com/example/go-rest-api-revision/packages/product-service/services"
+	"github.com/example/go-rest-api-revision/internal/product-service/api"
+	"github.com/example/go-rest-api-revision/internal/product-service/config"
+	gormDb "github.com/example/go-rest-api-revision/internal/product-service/db/gorm"
+	"github.com/example/go-rest-api-revision/internal/product-service/db/gorm/models"
+	"github.com/example/go-rest-api-revision/internal/product-service/logger"
+	"github.com/example/go-rest-api-revision/internal/product-service/services"
 	"github.com/example/go-rest-api-revision/pkg/messaging/kafka"
 	"github.com/example/go-rest-api-revision/pkg/middlewares"
 	"github.com/example/go-rest-api-revision/pkg/observability"

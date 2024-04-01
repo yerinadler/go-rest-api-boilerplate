@@ -3,7 +3,7 @@ package handlers
 import (
 	"context"
 
-	"github.com/example/go-rest-api-revision/packages/product-consumer/events"
+	"github.com/example/go-rest-api-revision/internal/product-consumer/events"
 	"github.com/sirupsen/logrus"
 	"go.opentelemetry.io/otel/trace"
 )
