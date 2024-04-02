@@ -1,6 +1,9 @@
 application:
   name: go-rest-api-boilerplate
-port: 1323
+external:
+  services:
+    customer: http://customer-api:1323
+port: 2323
 system:
   message: hello
 otlp:
@@ -9,4 +12,4 @@ gorm:
   dsn: "root:password@tcp(127.0.0.1:3306)/go-rest-api?charset=utf8mb4&parseTime=True&loc=Local"
 kafka:
   brokers:
-    - 127.0.0.1:9092
+    - localhost:9092

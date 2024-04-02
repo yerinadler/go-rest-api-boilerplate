@@ -33,7 +33,7 @@ func main() {
 	if err := kafka.StartConsumption(
 		cfg.Kafka.Brokers,
 		[]string{"test"},
-		"go-rest-api-consumer",
+		"go-rest-api-product-consumer",
 		"go-rest-api",
 		func(message *sarama.ConsumerMessage) error {
 			log.Printf("Message claimed: value = %s, timestamp = %v, topic = %s", string(message.Value), message.Timestamp, message.Topic)

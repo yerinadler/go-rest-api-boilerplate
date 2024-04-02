@@ -1,0 +1,7 @@
+application:
+  name: go-rest-api-boilerplate-customer-service
+otlp:
+  endpoint: 127.0.0.1:4317
+kafka:
+  brokers:
+    - localhost:9092

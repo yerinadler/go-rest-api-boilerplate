@@ -8,7 +8,7 @@ import (
 
 func LoadConfig() (*AppConfig, error) {
 	viper.AddConfigPath(".")
-	viper.AddConfigPath("./internal/product-service")
+	viper.AddConfigPath("./internal/customer-service")
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AutomaticEnv()

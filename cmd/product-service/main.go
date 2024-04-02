@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/example/go-rest-api-boilerplate/internal/product-service/adapters"
 	"github.com/example/go-rest-api-boilerplate/internal/product-service/api"
 	"github.com/example/go-rest-api-boilerplate/internal/product-service/config"
 	gormDb "github.com/example/go-rest-api-boilerplate/internal/product-service/db/gorm"
@@ -48,8 +49,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	customerAdapter := adapters.NewCustomerAdapter(cfg.External.Services.Customer)
 	systemService := services.NewSystemService(tracer)
-	productService := services.NewProductService(tracer, logger, db, kafkaProducer)
+	productService := services.NewProductService(tracer, logger, db, kafkaProducer, customerAdapter)
 
 	api.InitSystemHandler(e, systemService)
 	api.InitProductHandler(e, productService)

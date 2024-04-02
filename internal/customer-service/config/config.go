@@ -6,8 +6,6 @@ type AppConfig struct {
 	System      SystemConfig
 	Otlp        OtlpConfig
 	Gorm        GormConfig
-	Kafka       KafkaConfig
-	External    ExternalConfig
 }
 
 type ApplicationConfig struct {
@@ -24,14 +22,4 @@ type SystemConfig struct {
 
 type OtlpConfig struct {
 	Endpoint string
-}
-
-type KafkaConfig struct {
-	Brokers []string
-}
-
-type ExternalConfig struct {
-	Services struct {
-		Customer string
-	}
 }

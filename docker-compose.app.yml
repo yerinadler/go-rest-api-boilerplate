@@ -1,0 +1,73 @@
+version: '3.9'
+services:
+  product-service:
+    build:
+      context: .
+      args:
+        TARGET: product-service
+    container_name: go-rest-api-boilerplate-product-service
+    restart: unless-stopped
+    ports:
+      - 1323:1323
+    environment:
+      APPLICATION_NAME: go-rest-api-boilerplate-product-service
+      EXTERNAL_SERVICES_CUSTOMER: http://customer-service:1323
+      PORT: 1323
+      KAFKA_BROKERS: kafka:29092
+      OTLP_ENDPOINT: otel-collector:4317
+      GORM_DSN: "root:password@tcp(mysql:3306)/go-rest-api?charset=utf8mb4&parseTime=True&loc=Local"
+      SYSTEM_MESSAGE: hello
+    logging:
+      driver: fluentd
+      options:
+        tag: go-rest-api-product-service
+    depends_on:
+      - kafka
+      - mysql
+    links:
+      - fluentbit
+  customer-service:
+    build:
+      context: .
+      args:
+        TARGET: customer-service
+    container_name: go-rest-api-boilerplate-customer-service
+    restart: unless-stopped
+    ports:
+      - 2323:1323
+    environment:
+      APPLICATION_NAME: go-rest-api-boilerplate-customer-service
+      PORT: 1323
+      KAFKA_BROKERS: kafka:29092
+      OTLP_ENDPOINT: otel-collector:4317
+      GORM_DSN: "root:password@tcp(mysql:3306)/go-rest-api?charset=utf8mb4&parseTime=True&loc=Local"
+      SYSTEM_MESSAGE: hello
+    logging:
+      driver: fluentd
+      options:
+        tag: go-rest-api-customer-service
+    depends_on:
+      - kafka
+      - mysql
+    links:
+      - fluentbit
+  consumer:
+    build:
+      context: .
+      args:
+        TARGET: product-consumer
+    container_name: go-rest-api-boilerplate-consumer
+    restart: unless-stopped
+    environment:
+      APPLICATION_NAME: go-rest-api-boilerplate-consumer
+      KAFKA_BROKERS: kafka:29092
+      OTLP_ENDPOINT: otel-collector:4317
+    logging:
+      driver: fluentd
+      options:
+        tag: go-rest-api-consumer
+    depends_on:
+      - kafka
+      - mysql
+    links:
+      - fluentbit

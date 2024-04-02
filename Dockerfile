@@ -25,6 +25,8 @@ RUN GOOS=$BUILD_OS GOARCH=$BUILD_ARCHITECTURE go build -o bin/app -v -ldflags="-
 
 FROM alpine:3
 
+ARG TARGET
+
 WORKDIR /app
 
 COPY --from=build_stage /usr/share/zoneinfo /usr/share/zoneinfo
@@ -32,7 +34,7 @@ COPY --from=build_stage /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=build_stage /etc/passwd /etc/passwd
 COPY --from=build_stage /etc/group /etc/group
 
-COPY --from=build_stage /usr/src/app/config.yaml .
+COPY --from=build_stage /usr/src/app/internal/$TARGET/config.yaml .
 COPY --from=build_stage /usr/src/app/bin/app .
 
 ENV TZ=UTC

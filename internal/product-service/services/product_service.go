@@ -6,6 +6,7 @@ import (
 	"errors"
 	"strconv"
 
+	"github.com/example/go-rest-api-boilerplate/internal/product-service/adapters"
 	"github.com/example/go-rest-api-boilerplate/internal/product-service/db/gorm/models"
 	"github.com/example/go-rest-api-boilerplate/internal/product-service/dtos"
 	"github.com/example/go-rest-api-boilerplate/internal/product-service/events"
@@ -17,24 +18,30 @@ import (
 )
 
 type ProductService struct {
-	tracer   trace.Tracer
-	logger   *logrus.Logger
-	db       *gorm.DB
-	producer *kafka.KafkaProducer
+	tracer          trace.Tracer
+	logger          *logrus.Logger
+	db              *gorm.DB
+	producer        *kafka.KafkaProducer
+	customerAdapter *adapters.CustomerAdapter
 }
 
-func NewProductService(tracer trace.Tracer, logger *logrus.Logger, db *gorm.DB, producer *kafka.KafkaProducer) *ProductService {
+func NewProductService(tracer trace.Tracer, logger *logrus.Logger, db *gorm.DB, producer *kafka.KafkaProducer, customerAdapter *adapters.CustomerAdapter) *ProductService {
 	return &ProductService{
 		tracer,
 		logger,
 		db,
 		producer,
+		customerAdapter,
 	}
 }
 
 func (s *ProductService) CreateProduct(ctx context.Context, dto *dtos.ProductDto) error {
 	ctx, span := s.tracer.Start(ctx, "creating a new product")
 	defer span.End()
+
+	data, _ := s.customerAdapter.GetCustomerById(ctx, 2)
+
+	s.logger.WithContext(ctx).Infof("successfullly retrieved the customer data %v", data)
 
 	product := &models.Product{
 		Name:        dto.Name,

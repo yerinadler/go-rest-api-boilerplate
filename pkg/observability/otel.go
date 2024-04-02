@@ -97,17 +97,17 @@ func InitialiseOpentelemetry(otlpEndpoint string, appName string) func() {
 	batchSpanProcessor := sdktrace.NewBatchSpanProcessor(exporter)
 	tracerProvider := newTraceProvider(resource, batchSpanProcessor)
 
-	meterProvider, err := newMeterProvider(resource)
+	// meterProvider, err := newMeterProvider(resource)
 	exceptions.ReportError(err, "failed to initialise the meter provider")
 
 	otel.SetTracerProvider(tracerProvider)
-	otel.SetMeterProvider(meterProvider)
+	// otel.SetMeterProvider(meterProvider)
 
 	otel.SetTextMapPropagator(propagation.TraceContext{})
 
 	return func() {
 		exceptions.ReportError(tracerProvider.Shutdown(ctx), "failed to gracefully shutdown the tracer provider")
-		exceptions.ReportError(meterProvider.Shutdown(ctx), "failed to gracefully shutdown the meter provider")
+		// exceptions.ReportError(meterProvider.Shutdown(ctx), "failed to gracefully shutdown the meter provider")
 		cancel()
 	}
 }
