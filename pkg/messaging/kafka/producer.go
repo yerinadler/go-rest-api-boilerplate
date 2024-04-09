@@ -4,7 +4,9 @@ import (
 	"context"
 
 	"github.com/IBM/sarama"
+	"github.com/dnwe/otelsarama"
 	"github.com/sirupsen/logrus"
+	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -21,11 +23,12 @@ func NewKafkaProducer(brokers []string, logger *logrus.Logger, tracer trace.Trac
 	config.Producer.Return.Successes = true
 
 	producer, err := sarama.NewSyncProducer(brokers, config)
+	wrapped := otelsarama.WrapSyncProducer(config, producer)
 	if err != nil {
 		return nil, err
 	}
 
-	kafkaProducer := &KafkaProducer{producer, logger, tracer}
+	kafkaProducer := &KafkaProducer{wrapped, logger, tracer}
 
 	return kafkaProducer, nil
 }
@@ -39,6 +42,8 @@ func (p *KafkaProducer) Publish(ctx context.Context, topic string, value string,
 		Value: sarama.StringEncoder(value),
 		Key:   sarama.StringEncoder(key),
 	}
+
+	otel.GetTextMapPropagator().Inject(ctx, otelsarama.NewProducerMessageCarrier(producerMessage))
 
 	partition, offset, err := p.producer.SendMessage(producerMessage)
 	if err != nil {
