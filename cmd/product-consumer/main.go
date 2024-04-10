@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/IBM/sarama"
+	"github.com/dnwe/otelsarama"
 	"github.com/example/go-rest-api-boilerplate/internal/product-consumer/events"
 	"github.com/example/go-rest-api-boilerplate/internal/product-consumer/events/handlers"
 	"github.com/example/go-rest-api-boilerplate/internal/product-service/config"
@@ -32,17 +33,20 @@ func main() {
 
 	if err := kafka.StartConsumption(
 		cfg.Kafka.Brokers,
-		[]string{"test"},
+		[]string{"product"},
 		"go-rest-api-product-consumer",
 		"go-rest-api",
 		func(message *sarama.ConsumerMessage) error {
 			log.Printf("Message claimed: value = %s, timestamp = %v, topic = %s", string(message.Value), message.Timestamp, message.Topic)
+
+			ctx := otel.GetTextMapPropagator().Extract(context.Background(), otelsarama.NewConsumerMessageCarrier(message))
+
 			var productCreatedEvent events.ProductCreated
 			if err := json.Unmarshal(message.Value, &productCreatedEvent); err != nil {
 				log.Fatal(err)
 			}
 
-			if err := eventHandler.Handle(context.Background(), &productCreatedEvent); err != nil {
+			if err := eventHandler.Handle(ctx, &productCreatedEvent); err != nil {
 				log.Fatal(err)
 			}
 

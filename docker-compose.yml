@@ -29,8 +29,16 @@ services:
     image: confluentinc/cp-kafka:7.5.0
     depends_on:
       - kafka
-    command: >
-      bash -c "sleep 5s && kafka-topics --list --bootstrap-server kafka:29092"
+    entrypoint: [ "/bin/sh", "-c" ]
+    command: |
+      "
+        kafka-topics --list --bootstrap-server kafka:29092
+
+        sleep 5
+
+        kafka-topics --create --topic product --if-not-exists --replication-factor 1 --partitions 1 --bootstrap-server kafka:29092
+      "
+      
   mysql:
     image: mysql:8
     restart: unless-stopped

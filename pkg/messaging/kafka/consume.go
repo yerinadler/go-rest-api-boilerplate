@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"github.com/IBM/sarama"
+	"github.com/dnwe/otelsarama"
 )
 
 func toggleConsumptionFlow(client sarama.ConsumerGroup, isPause *bool) {
@@ -40,6 +41,8 @@ func StartConsumption(
 		handlerFunc: handlerFunc,
 	}
 
+	wrapped := otelsarama.WrapConsumerGroupHandler(&consumer)
+
 	ctx, cancel := context.WithCancel(context.Background())
 	client, err := sarama.NewConsumerGroup(brokers, groupId, config)
 
@@ -54,7 +57,7 @@ func StartConsumption(
 	go func() {
 		defer wg.Done()
 		for {
-			if err := client.Consume(ctx, topics, &consumer); err != nil {
+			if err := client.Consume(ctx, topics, wrapped); err != nil {
 				log.Panicf("error initiating consumption : %v", err)
 			}
 
