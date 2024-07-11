@@ -24,8 +24,16 @@ func main() {
 
 	logger := logger.GetLogger()
 
-	shutdown := observability.InitialiseOpentelemetry(cfg.Otlp.Endpoint, cfg.Application.Name)
-	defer shutdown()
+	ctx := context.Background()
+
+	shutdownFunctions := observability.InitialiseOpentelemetry(ctx, cfg.Otlp.Endpoint, cfg.Application.Name)
+	defer func() {
+		for _, shutdownFunction := range shutdownFunctions {
+			if err := shutdownFunction(ctx); err != nil {
+				log.Fatal(err)
+			}
+		}
+	}()
 
 	tracer := otel.Tracer("main")
 

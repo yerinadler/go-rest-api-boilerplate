@@ -58,7 +58,7 @@ func newMeterProvider(resource *resource.Resource) (*sdkmetric.MeterProvider, er
 		sdkmetric.WithResource(resource),
 		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(
 			metricExporter,
-			sdkmetric.WithInterval(3*time.Second),
+			sdkmetric.WithInterval(1*time.Minute),
 		)),
 	)
 
@@ -85,8 +85,8 @@ func InitTracer(otlpEndpoint string, appName string) func() {
 	}
 }
 
-func InitialiseOpentelemetry(otlpEndpoint string, appName string) func() {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+func InitialiseOpentelemetry(ctx context.Context, otlpEndpoint string, appName string) []func(context.Context) error {
+	var shutdownFunctions []func(context.Context) error
 
 	resource, err := newResource(ctx, appName)
 	exceptions.ReportError(err, "failed to create the OTLP resource")
@@ -97,17 +97,17 @@ func InitialiseOpentelemetry(otlpEndpoint string, appName string) func() {
 	batchSpanProcessor := sdktrace.NewBatchSpanProcessor(exporter)
 	tracerProvider := newTraceProvider(resource, batchSpanProcessor)
 
-	// meterProvider, err := newMeterProvider(resource)
+	shutdownFunctions = append(shutdownFunctions, tracerProvider.Shutdown)
+
+	meterProvider, err := newMeterProvider(resource)
 	exceptions.ReportError(err, "failed to initialise the meter provider")
 
+	shutdownFunctions = append(shutdownFunctions, meterProvider.Shutdown)
+
 	otel.SetTracerProvider(tracerProvider)
-	// otel.SetMeterProvider(meterProvider)
+	otel.SetMeterProvider(meterProvider)
 
 	otel.SetTextMapPropagator(propagation.TraceContext{})
 
-	return func() {
-		exceptions.ReportError(tracerProvider.Shutdown(ctx), "failed to gracefully shutdown the tracer provider")
-		// exceptions.ReportError(meterProvider.Shutdown(ctx), "failed to gracefully shutdown the meter provider")
-		cancel()
-	}
+	return shutdownFunctions
 }
